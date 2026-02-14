@@ -59,3 +59,34 @@ A periodic tick (heartbeat/cron) triggers:
 - run a bounded iteration step
 - post structured updates
 
+
+## Tick contract (mixed discovery + delivery)
+Each tick MUST produce an **Iteration Update** posted to the active task thread and mirrored to the canonical GitHub issue:
+- Objective (1 sentence)
+- Decisions (0–3; mark "needs human approval" when applicable)
+- Changes (evidence): commit hash / PR link / patch diff / doc/ADR link
+- Next (1–3)
+- Risks/Questions (<=3)
+
+This contract supports both:
+- Discovery ticks (design/requirements/ADR)
+- Delivery ticks (code/tests/PR)
+
+## Assist mode (default) — what automation is allowed
+Allowed automatically:
+- create issues (epic + child issues)
+- create branches, commit, push
+- open PRs (prefer Draft first)
+- comment on issues/PRs with progress + evidence
+- add labels/milestones/projects (if configured)
+
+Requires explicit human approval:
+- merge PRs
+- close issues/PRs (except clearly bot-created temporary artifacts when pre-approved)
+- releases/tags/publishing
+- changing repo settings/permissions
+- deployments or any external announcements
+
+Hard boundaries (never):
+- exfiltrate secrets/credentials
+- cross-org/repo permission changes without explicit consent
