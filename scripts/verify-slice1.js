@@ -16,7 +16,7 @@ console.log(sh(`node ${path.join(process.cwd(), 'bin/ocb.js')} init`));
 console.log('== run ==');
 process.chdir(tmp);
 console.log(sh(`node ${path.join(process.cwd(), '..', 'bin/ocb.js')} init`));
-console.log(sh(`node ${path.join(process.cwd(), '..', 'bin/ocb.js')} run --objective "slice1 verify"`));
+console.log(sh(`node ${path.join(process.cwd(), '..', 'bin/ocb.js')} run --objective "slice1 verify" --actorId "local:verify"`));
 
 console.log('== tick ==');
 console.log(sh(`node ${path.join(process.cwd(), '..', 'bin/ocb.js')} tick`));

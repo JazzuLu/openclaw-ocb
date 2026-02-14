@@ -26,12 +26,12 @@ let r = await run('node', [ocb, 'init'], tmp);
 if (r.code !== 0) throw new Error(r.err || r.out);
 
 console.log('== run ==');
-r = await run('node', [ocb, 'run', '--objective', 'lock verify'], tmp);
+r = await run('node', [ocb, 'run', '--objective', 'lock verify', '--actorId', 'local:verify'], tmp);
 if (r.code !== 0) throw new Error(r.err || r.out);
 
 console.log('== concurrent ticks ==');
-const t1 = run('node', [ocb, 'tick', '--sessionKey', 'default'], tmp);
-const t2 = run('node', [ocb, 'tick', '--sessionKey', 'default'], tmp);
+const t1 = run('node', [ocb, 'tick', '--sessionKey', 'default', '--actorId', 'local:verify'], tmp);
+const t2 = run('node', [ocb, 'tick', '--sessionKey', 'default', '--actorId', 'local:verify'], tmp);
 const res = await Promise.all([t1, t2]);
 
 for (const [i, x] of res.entries()) {

@@ -22,7 +22,7 @@ async function main() {
 
   try {
     if (!cmd || cmd === 'help' || cmd === '--help' || cmd === '-h') {
-      console.log(`ocb <command> [--flags]\n\nCommands:\n  init\n  run --objective <text> [--sessionKey <k>] [--role <r>]\n  tick [--sessionKey <k>]\n  status [--sessionKey <k>]\n`);
+      console.log(`ocb <command> [--flags]\n\nCommands:\n  init\n  run --objective <text> [--sessionKey <k>] [--role <r>] [--actorId <a>]\n  tick [--sessionKey <k>] [--actorId <a>]\n  status [--sessionKey <k>]\n`);
       process.exit(0);
     }
 
@@ -37,6 +37,7 @@ async function main() {
         cwd: process.cwd(),
         sessionKey: args.sessionKey ?? 'default',
         role: args.role ?? 'pm',
+        actorId: args.actorId ?? undefined,
         objective: args.objective
       });
       console.log('ok');
@@ -44,7 +45,7 @@ async function main() {
     }
 
     if (cmd === 'tick') {
-      await tick({ cwd: process.cwd(), sessionKey: args.sessionKey ?? 'default' });
+      await tick({ cwd: process.cwd(), sessionKey: args.sessionKey ?? 'default', actorId: args.actorId ?? undefined });
       console.log('ok');
       return;
     }

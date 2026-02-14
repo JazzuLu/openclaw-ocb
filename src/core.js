@@ -20,7 +20,7 @@ export async function init({ cwd = process.cwd() } = {}) {
   return { repoRoot, ocbDir, locksDir, eventsPath };
 }
 
-export async function run({ cwd, sessionKey = 'default', role = 'pm', objective }) {
+export async function run({ cwd, sessionKey = 'default', role = 'pm', actorId = undefined, objective }) {
   if (!objective) throw new Error('Missing --objective');
 
   const { repoRoot, eventsPath, locksDir } = await init({ cwd });
@@ -31,6 +31,7 @@ export async function run({ cwd, sessionKey = 'default', role = 'pm', objective 
       type: 'run_requested',
       repoRoot,
       sessionKey,
+      actorId,
       role,
       objective
     });
@@ -38,7 +39,7 @@ export async function run({ cwd, sessionKey = 'default', role = 'pm', objective 
   });
 }
 
-export async function tick({ cwd, sessionKey = 'default' }) {
+export async function tick({ cwd, sessionKey = 'default', actorId = undefined }) {
   const { repoRoot, eventsPath, locksDir } = await init({ cwd });
   const key = `${repoRoot}::${sessionKey}`;
 
@@ -53,6 +54,7 @@ export async function tick({ cwd, sessionKey = 'default' }) {
       type: 'iteration_update',
       repoRoot,
       sessionKey,
+      actorId,
       update: {
         objective,
         decisions: [],
