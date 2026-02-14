@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-import { init, run, status, tick, formatStatus } from '../src/core.js';
+import { init, run, status, tick, cancel, formatStatus } from '../src/core.js';
+import { waitForEvent } from '../src/wait.js';
 
 function parseArgs(argv) {
   const args = { _: [] };
@@ -47,6 +48,32 @@ async function main() {
     if (cmd === 'tick') {
       await tick({ cwd: process.cwd(), sessionKey: args.sessionKey ?? 'default', actorId: args.actorId ?? undefined });
       console.log('ok');
+      return;
+    }
+
+    if (cmd === 'cancel') {
+      await cancel({
+        cwd: process.cwd(),
+        sessionKey: args.sessionKey ?? 'default',
+        actorId: args.actorId ?? undefined,
+        reason: args.reason ?? 'cancel requested'
+      });
+      console.log('ok');
+      return;
+    }
+
+    if (cmd === 'wait') {
+      const type = args.type;
+      if (!type || typeof type !== 'string') throw new Error('Missing --type');
+      const st = await status({ cwd: process.cwd(), sessionKey: args.sessionKey ?? 'default' });
+      const sinceTs = new Date().toISOString();
+      const ev = await waitForEvent({
+        eventsPath: st.eventsPath,
+        sinceTs,
+        timeoutMs: args.timeoutMs ? Number(args.timeoutMs) : 30_000,
+        predicate: (e) => e.type === type && (e.sessionKey === (args.sessionKey ?? 'default') || !e.sessionKey)
+      });
+      console.log(JSON.stringify(ev, null, 2));
       return;
     }
 

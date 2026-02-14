@@ -7,7 +7,7 @@
     "ocb": "./bin/ocb.js"
   },
   "scripts": {
-    "verify": "node ./scripts/verify-slice1.js"
+    "verify": "node ./scripts/verify-slice1.js && node ./scripts/verify-lock.js && node ./scripts/verify-gh-anchor-dryrun.js"
   },
   "engines": {
     "node": ">=20"

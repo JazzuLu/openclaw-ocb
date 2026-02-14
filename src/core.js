@@ -75,12 +75,14 @@ export async function status({ cwd, sessionKey = 'default' }) {
 
   const lastRun = [...filtered].reverse().find((e) => e.type === 'run_requested');
   const lastTick = [...filtered].reverse().find((e) => e.type === 'iteration_update');
+  const lastCancel = [...filtered].reverse().find((e) => e.type === 'cancel_requested');
 
   return {
     repoRoot,
     sessionKey,
     lastObjective: lastRun?.objective ?? null,
     lastUpdate: lastTick?.update ?? null,
+    lastCancel: lastCancel ? { ts: lastCancel.ts, reason: lastCancel.reason, actorId: lastCancel.actorId } : null,
     eventsCount: filtered.length,
     eventsPath
   };
@@ -93,9 +95,29 @@ export function formatStatus(s) {
   lines.push(`events: ${s.eventsCount}`);
   lines.push(`eventsPath: ${path.relative(process.cwd(), s.eventsPath)}`);
   lines.push(`objective: ${s.lastObjective ?? '(none)'}`);
+  if (s.lastCancel) {
+    lines.push(`canceled: ${s.lastCancel.ts} (${s.lastCancel.reason})`);
+  }
   if (s.lastUpdate) {
     lines.push('lastUpdate:');
     lines.push(`  next: ${(s.lastUpdate.next || []).join('; ')}`);
   }
   return lines.join('\n');
+}
+
+
+export async function cancel({ cwd, sessionKey = 'default', actorId = undefined, reason = 'cancel requested' }) {
+  const { repoRoot, eventsPath, locksDir } = await init({ cwd });
+  const key = `${repoRoot}::${sessionKey}`;
+
+  return withLock({ locksDir, key }, async () => {
+    await appendEvent(eventsPath, {
+      type: 'cancel_requested',
+      repoRoot,
+      sessionKey,
+      actorId,
+      reason
+    });
+    return { ok: true };
+  });
 }
